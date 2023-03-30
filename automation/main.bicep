@@ -34,6 +34,8 @@ param dnsZoneNames array = [
   'privatelink.blob.${environment().suffixes.storage}'
   'privatelink.file.${environment().suffixes.storage}'
   'privatelink.postgres.database.azure.com'
+  'privatelink.eventgrid.azure.net'
+  'privatelink.servicebus.windows.net'
   'privatelink.azurestaticapps.net'
   'privatelink.1.azurestaticapps.net'
   'privatelink.2.azurestaticapps.net'
