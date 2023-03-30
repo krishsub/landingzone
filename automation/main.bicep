@@ -131,6 +131,7 @@ module spokePvtDnsZonesVnetLink 'pvtDnsZonesVnetLink.bicep' = [for spoke in spok
     vnetResourceGroupName: spoke.spokeResourceGroupName
   }
   dependsOn: [
+    hubVnet
     spokeVnets
     hubPvtDnsZones
   ]
@@ -145,6 +146,8 @@ module hubPvtDnsZonesVnetLink 'pvtDnsZonesVnetLink.bicep' = {
     vnetResourceGroupName: hubResourceGroup.name
   }
   dependsOn: [
+    hubVnet
+    spokeVnets
     hubPvtDnsZones
   ]
 }
