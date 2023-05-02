@@ -23,9 +23,12 @@ resource hubVnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
         }
       }
       {
-        name: 'Bastion-Subnet'
+        name: 'AzureBastionSubnet'
         properties: {
           addressPrefix: '10.0.1.0/26'
+          networkSecurityGroup: {
+            id: bastionHttpsNsg.id
+          }
           privateEndpointNetworkPolicies: 'Enabled'
         }
       }
@@ -43,7 +46,132 @@ resource hubVnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
         name: 'Compute-Subnet'
         properties: {
           addressPrefix: '10.0.2.0/24'
+          networkSecurityGroup: {
+            id: defaultNsg.id
+          }
           privateEndpointNetworkPolicies: 'Enabled'
+        }
+      }
+    ]
+  }
+}
+
+resource bastionHttpsNsg 'Microsoft.Network/networkSecurityGroups@2022-07-01' = {
+  name: 'Bastion-Https-Nsg'
+  location: location
+  properties: {
+    securityRules: [
+      {
+        name: 'Allow-HTTPS-Inbound'
+        properties: {
+          priority: 120
+          direction: 'Inbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'Internet'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '443'
+        }
+      }
+      {
+        name: 'Allow-GatewayManager-Inbound'
+        properties: {
+          priority: 130
+          direction: 'Inbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'GatewayManager'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '443'
+        }
+      }
+      {
+        name: 'Allow-AzureLoadBalancer-Inbound'
+        properties: {
+          priority: 140
+          direction: 'Inbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'AzureLoadBalancer'
+          sourcePortRange: '*'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '443'
+        }
+      }
+      {
+        name: 'Allow-BastionHostComms-Inbound'
+        properties: {
+          priority: 150
+          direction: 'Inbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'VirtualNetwork'
+          sourcePortRange: '*'
+          destinationAddressPrefix: 'VirtualNetwork'
+          destinationPortRanges: [
+            '5701'
+            '8080'
+          ]
+        }
+      }
+      {
+        name: 'Allow-SshRdp-Outbound'
+        properties: {
+          priority: 100
+          direction: 'Outbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+          destinationAddressPrefix: 'VirtualNetwork'
+          destinationPortRanges: [
+            '22'
+            '3389'
+          ]
+        }
+      }
+      {
+        name: 'Allow-AzureCloud-Outbound'
+        properties: {
+          priority: 110
+          direction: 'Outbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+          destinationAddressPrefix: 'AzureCloud'
+          destinationPortRange: '443'
+        }
+      }
+      {
+        name: 'Allow-BastionComms-Outbound'
+        properties: {
+          priority: 120
+          direction: 'Outbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: 'VirtualNetwork'
+          sourcePortRange: '*'
+          destinationAddressPrefix: 'VirtualNetwork'
+          destinationPortRanges: [
+            '5701'
+            '8080'
+          ]
+        }
+      }
+      {
+        name: 'Allow-Http-Outbound'
+        properties: {
+          priority: 130
+          direction: 'Outbound'
+          access: 'Allow'
+          protocol: 'Tcp'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+          destinationAddressPrefix: 'Internet'
+          destinationPortRange: '80'
         }
       }
     ]

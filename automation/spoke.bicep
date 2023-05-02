@@ -27,6 +27,9 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
         name: 'Compute1-Subnet'
         properties: {
           addressPrefix: '${networkPrefix}.0.64/26' // 64 addresses (- 5 reserved)
+          networkSecurityGroup: {
+            id: defaultNsg.id
+          }
           privateEndpointNetworkPolicies: 'Enabled'
         }
       }
@@ -34,6 +37,9 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
         name: 'Compute2-Subnet'
         properties: {
           addressPrefix: '${networkPrefix}.0.128/26' // 64 addresses (- 5 reserved)
+          networkSecurityGroup: {
+            id: defaultNsg.id
+          }
           privateEndpointNetworkPolicies: 'Enabled'
         }
       }
@@ -41,6 +47,9 @@ resource spokeVnet 'Microsoft.Network/virtualNetworks@2022-07-01' = {
         name: 'PvtEndpoints-Subnet'
         properties: {
           addressPrefix: '${networkPrefix}.0.192/26' // 64 addresses (- 5 reserved)
+          networkSecurityGroup: {
+            id: defaultNsg.id
+          }
           privateEndpointNetworkPolicies: 'Enabled'
         }
       }
